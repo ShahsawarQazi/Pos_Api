@@ -4,7 +4,7 @@ using Pos.Application.Common;
 
 namespace Pos.Application.Contracts.Request.Customer
 {
-    public class GetPayoutRequest
+    public class GetCustomerRequest
     {
         /// <summary>
         /// unique id of client making Payout request, it is configured in database of service

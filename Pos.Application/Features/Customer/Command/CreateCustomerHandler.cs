@@ -17,11 +17,11 @@ namespace Pos.Application.Features.Customer.Command
 
     }
 
-    public class CreatePayoutHandler : IRequestHandler<CreateCustomerCommand, CreateCustomerResponse>
+    public class CreateCustomerHandler : IRequestHandler<CreateCustomerCommand, CreateCustomerResponse>
     {
         private readonly IPosDbContext _dbContext;
 
-        public CreatePayoutHandler(IPosDbContext dbContext)
+        public CreateCustomerHandler(IPosDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -41,7 +41,7 @@ namespace Pos.Application.Features.Customer.Command
 
             var response = new CreateCustomerResponse
             {
-                PayoutId = new Guid(),
+                Id = new Guid(),
             };
 
             return response;

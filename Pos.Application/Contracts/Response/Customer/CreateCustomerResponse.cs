@@ -2,6 +2,6 @@
 {
     public class CreateCustomerResponse
     {
-        public  Guid PayoutId { get; set; }
+        public  Guid Id { get; set; }
     }
 }

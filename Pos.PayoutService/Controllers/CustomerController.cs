@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Pos.Application.Contracts.Request.Customer;
 using Pos.Application.Contracts.Response.Customer;
 using Pos.Application.Features.Customer.Command;
+using Pos.Application.Features.Customer.Queries;
 using PosApi.Extensions.Swagger;
 
 namespace PosApi.Controllers
@@ -28,5 +29,13 @@ namespace PosApi.Controllers
             return Ok(response);
         }
 
+        [HttpGet]
+        [ProducesResponseType(typeof(GetCustomerResponse), StatusCodes.Status200OK)]
+        [Route("Get")]
+        public async Task<IActionResult> CreateCustomer(int id)
+        {
+            var response = await _mediator.Send(new GetCustomerCommand(id));
+            return Ok(response);
+        }
     }
 }
