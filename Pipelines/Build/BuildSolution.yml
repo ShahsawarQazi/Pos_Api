@@ -1,0 +1,58 @@
+
+steps:   
+        - task: NodeTool@0
+          displayName: 'Admin:Install Node.js'
+          inputs:
+           versionSpec: '16.17.0' 
+        - task: UseDotNet@2
+          displayName: 'Use .NET SDK 8.0'
+          inputs:
+            packageType: 'sdk'
+            version: '8.0.x'
+
+        #API pacakge
+        - task: FileTransform@1
+          displayName: File Transform
+          inputs:
+            folderPath: '$(Build.SourcesDirectory)\Dss.PayoutService'
+            fileType: 'json'
+            targetFiles: 'appsettings.json'       
+        - task: DotNetCoreCLI@2
+          displayName: API:Publish
+          inputs:
+           command: publish
+           publishWebProjects: false
+           projects: '**/Dss.PayoutService.csproj'
+           arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/Api'
+           zipAfterPublish: True
+        - task: PublishBuildArtifacts@1
+          displayName: API:PublishBuildArtifacts
+          inputs:
+            PathtoPublish: '$(build.artifactstagingdirectory)/Api'
+            artifactName: 'dropApi'
+
+        #Database pacakge
+        - task: DotNetCoreCLI@2
+          displayName: DB:Manifest for tool
+          inputs:
+             command: custom
+             custom: 'new '
+             arguments: tool-manifest
+        - task: DotNetCoreCLI@2
+          displayName: DB:Install EF Tool
+          inputs:
+            command: custom
+            custom: 'tool '
+            arguments: install dotnet-ef --version 8.*    
+        - task: PowerShell@2
+          displayName: DB:PowerShell script for bundle creation
+          inputs:
+            targetType: 'inline'
+            script: |
+              dotnet ef migrations bundle -p '$(Build.SourcesDirectory)/Dss.Infrastructure.Persistence.Sql/Dss.Infrastructure.Persistence.Sql.csproj' -c $(dbContext) -o $(build.artifactstagingdirectory)/efbundle.exe -f -v --configuration Bundle
+        - task: PublishBuildArtifacts@1
+          displayName: DB:PublishBuildArtifacts
+          inputs:
+            PathtoPublish: '$(build.artifactstagingdirectory)/efbundle.exe'
+            artifactName: 'dropSQLBundle' 
+ 

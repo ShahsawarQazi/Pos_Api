@@ -1,0 +1,91 @@
+trigger: none
+resources:
+  pipelines:
+    - pipeline: PayoutServiceBuildDev
+      source: PayoutService-Dev-Build
+      trigger:
+        branches:
+          include:
+            - '*'
+stages:
+    - stage: 'PayoutServiceDeploy'
+      displayName: 'Payout Service Deploy'
+      variables:
+        - group: PayoutService-Dev
+      jobs:
+        - deployment: 'InitializationOfDeployment'
+          environment: PayoutService-Dev
+    - stage: 'PayoutServiceAPIDeploy'
+      dependsOn: [PayoutServiceDeploy]
+      displayName: Api Deploy
+      variables:
+      - group: PayoutService-Dev
+      jobs:
+      - deployment:
+        displayName: PayoutServiceAPIDeploy
+        pool:
+          name: DotNet Build Agents
+        environment: PayoutService-Dev
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - task: IISWebAppMgmt@3
+                displayName: 'Manage IIS App: $(websiteName)'
+                inputs:
+                  machinesList: '$(server)'
+                  AdminUserName: '$(DeployUserName)'
+                  AdminPassword: '$(DeployUserPassword)'
+                  WinRMProtocol: Http
+                  WebsiteName: '$(websiteName)'
+                  WebsitePhysicalPath: '$(WebsiteRootPath)\$(websiteName)'
+                  WebsitePhysicalPathAuth: 'WebsiteUserPassThrough'
+                  AddBinding: true
+                  CreateOrUpdateAppPoolForWebsite: true
+                  Protocol: https
+                  Port: 443
+                  SSLCertThumbPrint: 5bac7280dfe338a62d7f75e6b8af35073c2a0c42
+                  ServerNameIndication: true
+                  HostNameWithSNI: '$(websiteName)'
+                  AppPoolNameForWebsite: '$(AppPoolName)'
+                  AppPoolIdentityForWebsite: SpecificUser
+                  AppPoolUsernameForWebsite: '$(AppPoolIdentity)'
+                  AppPoolPasswordForWebsite: '$(AppPoolPassword)'
+                  AppPoolName: '$(websiteName)'
+                  AppPoolIdentity: SpecificUser
+                  AppPoolUsername: '$(AppPoolIdentity)'
+                  AppPoolPassword: '$(AppPoolPassword)'
+                timeoutInMinutes: 30
+              - task: IISWebAppDeploy@2
+                displayName: 'Deploy IIS App: $(PackagePath)\$(PackageName)'
+                inputs:
+                  machinesList: '$(server)'
+                  AdminUserName: '$(DeployUserName)'
+                  AdminPassword: '$(DeployUserPassword)'
+                  WinRMProtocol: Http
+                  WebDeployPackage: '$(SourcePackageName)'
+                  WebsiteName: '$(websiteName)'
+                  TakeAppOffline: true
+              - task: IISutilities@0
+                displayName: 'Start WebAppPool $(websiteName)'
+                inputs:
+                  server: '$(server)'
+                  action: 'Start WebAppPool'
+                  names: '$(websiteName)'
+                  userName: '$(DeployUserName)'
+                  password: '$(DeployUserPassword)'
+              - task: IISutilities@0
+                displayName: 'Start Website $(websiteName).'
+                inputs:
+                  server: '$(server)'
+                  action: 'Start Website'
+                  names: '$(websiteName)'
+                  userName: '$(DeployUserName)'
+                  password: '$(DeployUserPassword)'
+              - task: PowerShell@2
+                displayName: 'Deploy Database.'
+                inputs:
+                 targetType: 'inline'
+                 script: |       
+                   $args = @($env:dbConnection)
+                   & '$(DatabaseSourcePackagePath)/efbundle.exe' $env:dbMigrationName --connection $args --verbose
