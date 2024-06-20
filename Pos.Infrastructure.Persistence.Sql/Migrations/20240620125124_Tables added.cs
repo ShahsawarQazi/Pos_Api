@@ -5,7 +5,7 @@
 namespace Pos.Infrastructure.Persistence.Sql.Migrations
 {
     /// <inheritdoc />
-    public partial class tableadded : Migration
+    public partial class Tablesadded : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -26,6 +26,20 @@ namespace Pos.Infrastructure.Persistence.Sql.Migrations
                 {
                     table.PrimaryKey("PK_Customer", x => x.Id);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "ParentCategories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ParentCategories", x => x.Id);
+                });
         }
 
         /// <inheritdoc />
@@ -33,6 +47,9 @@ namespace Pos.Infrastructure.Persistence.Sql.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Customer");
+
+            migrationBuilder.DropTable(
+                name: "ParentCategories");
         }
     }
 }

@@ -11,8 +11,8 @@ using Pos.Infrastructure.Persistence.Sql.SQLContext;
 namespace Pos.Infrastructure.Persistence.Sql.Migrations
 {
     [DbContext(typeof(PosDbContext))]
-    [Migration("20240605153345_table added")]
-    partial class tableadded
+    [Migration("20240620125124_Tables added")]
+    partial class Tablesadded
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,6 +54,26 @@ namespace Pos.Infrastructure.Persistence.Sql.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Customer");
+                });
+
+            modelBuilder.Entity("Pos.Domain.Entities.Entities.ParentCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ParentCategories");
                 });
 #pragma warning restore 612, 618
         }

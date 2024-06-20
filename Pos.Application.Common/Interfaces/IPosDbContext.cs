@@ -9,7 +9,7 @@ namespace Pos.Application.Common.Interfaces
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken(),
                    OperationType operationType = OperationType.Default, Guid transactionId = default(Guid), bool fullMode = true, bool forMigration = false);
         DbSet<Customer> Customer { get; }
-      
-     
+        DbSet<ParentCategory> ParentCategories { get; }
+
     }
 }

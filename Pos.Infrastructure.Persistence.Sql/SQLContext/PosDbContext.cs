@@ -14,6 +14,8 @@ namespace Pos.Infrastructure.Persistence.Sql.SQLContext
         {
 
         }
+        public DbSet<Customer> Customer { get; set; } = null!;
+        public DbSet<ParentCategory> ParentCategories { get; set; } = null!;
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new(),
             OperationType operationType = OperationType.Default, Guid transactionId = default, bool fullMode = true, bool forMigration = false)
@@ -62,7 +64,7 @@ namespace Pos.Infrastructure.Persistence.Sql.SQLContext
         }
 
 
-        public DbSet<Customer> Customer { get; set; } = null!;
-        
+      
+
     }
 }

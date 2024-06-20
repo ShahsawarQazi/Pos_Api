@@ -30,6 +30,7 @@ namespace Pos.Application.Bootstrap
         {
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<ICustomerExportService, CustomerExportService>();
+            services.AddScoped<IParentCategoryRepository, ParentCategoryRepository>();
 
         }
     }
