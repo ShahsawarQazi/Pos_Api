@@ -1,10 +1,13 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Pos.Application.Common;
+using Pos.Application.Common.Interfaces;
 using Pos.Application.Contracts.Request.Customer;
 using Pos.Application.Contracts.Response.Customer;
 using Pos.Application.Features.Customer.Command;
 using Pos.Application.Features.Customer.Queries;
 using PosApi.Extensions.Swagger;
+using System.Text;
 
 namespace PosApi.Controllers
 {
@@ -14,10 +17,12 @@ namespace PosApi.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly ICustomerExportService _customerExportService;
 
-        public CustomerController(IMediator mediator)
+        public CustomerController(IMediator mediator, ICustomerExportService customerExportService)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            _customerExportService = customerExportService;
         }
 
         [HttpPost]
@@ -59,6 +64,31 @@ namespace PosApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while uploading the CSV.");
             }
         }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(FileContentResult), 200)]
+        [Route("ExportCsv")]
+        public async Task<IActionResult> ExportCustomersCsv()
+        {
+            var Csv = Pos.Application.Common.Extensions.StringExtensions.EscapeForCsv;
+            IEnumerable<CustomerExportDto> customers = await _customerExportService.GetCustomersForExportAsync();
+
+            // Create CSV content
+            var sb = new StringBuilder();
+            sb.AppendLine("Name,PhoneNo,Email,CompanyName,Address");
+
+            foreach (var customer in customers)
+            {
+                sb.AppendLine($"{Csv(customer.Name)},{customer.PhoneNo},{Csv(customer.Email)},{Csv(customer.CompanyName)},{Csv(customer.Address)}");
+            }
+
+            byte[] csvBytes = Encoding.UTF8.GetBytes(sb.ToString());
+
+            // Return CSV as file
+            return File(csvBytes, "text/csv", "customers.csv");
+        }
+
+       
     }
 }
 

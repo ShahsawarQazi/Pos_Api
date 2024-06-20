@@ -2,9 +2,10 @@
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Pos.Application.Common.Behaviours;
+using Pos.Application.Common.Exceptions;
+using Pos.Application.Common.Extensions;
 using Pos.Application.Common.Interfaces;
 using Pos.Application.Common.ValidationDefinitions;
-using Pos.Infrastructure.Repositories;
 
 namespace Pos.Application.Bootstrap
 {
@@ -28,6 +29,7 @@ namespace Pos.Application.Bootstrap
         private static void AddAppServices(IServiceCollection services)
         {
             services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<ICustomerExportService, CustomerExportService>();
 
         }
     }

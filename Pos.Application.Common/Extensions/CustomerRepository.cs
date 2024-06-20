@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Pos.Domain.Entities.Entities;
 using Pos.Application.Common.Interfaces;
+using Pos.Domain.Entities.Entities;
 
-namespace Pos.Infrastructure.Repositories
+namespace Pos.Application.Common.Extensions
 {
     public class CustomerRepository : ICustomerRepository
     {
@@ -18,9 +18,24 @@ namespace Pos.Infrastructure.Repositories
             await _context.Customer.AddAsync(customer);
         }
 
+        public void Update(Customer customer)
+        {
+            _context.Customer.Update(customer);
+        }
+
+        public async Task<Customer> FindByEmailAsync(string email)
+        {
+            return await _context.Customer.FirstOrDefaultAsync(c => c.Email == email);
+        }
+
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Customer>> GetAllAsync()
+        {
+            return await _context.Customer.ToListAsync();
         }
     }
 }

@@ -52,7 +52,14 @@ namespace Pos.Application.Common.Extensions
             return r.Replace(s, tabs);
         }
 
-
+        public static string EscapeForCsv(string value)
+        {
+            if (value.Contains(",") || value.Contains("\"") || value.Contains("\n"))
+            {
+                return $"\"{value.Replace("\"", "\"\"")}\"";
+            }
+            return value;
+        }
 
     }
 }

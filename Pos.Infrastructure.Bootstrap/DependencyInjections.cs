@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Pos.Application.Common.Interfaces;
 using Pos.Infrastructure.Persistence.Sql.SQLContext;
-using Pos.Infrastructure.Repositories;
 
 namespace Pos.Infrastructure.Bootstrap
 {
