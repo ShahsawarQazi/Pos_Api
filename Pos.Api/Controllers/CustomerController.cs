@@ -37,5 +37,28 @@ namespace PosApi.Controllers
             var response = await _mediator.Send(new GetCustomerCommand(id));
             return Ok(response);
         }
+        [HttpPost]
+        [Route("UploadCsv")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> UploadCsv([FromForm] UploadCsvRequest uploadCsvRequest)
+        {
+            if (uploadCsvRequest.CsvFile.Length == 0)
+            {
+                return BadRequest("No file uploaded.");
+            }
+
+            var command = new UploadCsvCommand(uploadCsvRequest.CsvFile);
+            var result = await _mediator.Send(command);
+
+            if (result)
+            {
+                return Ok("CSV uploaded successfully.");
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while uploading the CSV.");
+            }
+        }
     }
 }
+
