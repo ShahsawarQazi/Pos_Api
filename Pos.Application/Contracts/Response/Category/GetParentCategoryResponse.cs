@@ -1,8 +1,9 @@
 ﻿namespace Pos.Application.Contracts.Response.Category
 {
-    public class CreateParentCategoryResponse
+    public class GetParentCategoryResponse
     {
         public string Name { get; set; }
-       
+        public string? Description { get; set; }
+
     }
 }
