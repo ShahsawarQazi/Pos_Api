@@ -7,11 +7,11 @@ namespace Pos.Application.Features.Customer.Queries
 {
     public class GetCustomerCommand : IRequest<GetCustomerResponse>
     {
-        public int Id { get; }
+        public string Name { get; }
 
-        public GetCustomerCommand(int id)
+        public GetCustomerCommand(string name)
         {
-            Id = id;
+            Name = name;
         }
     }
     public class GetCustomerHandler : IRequestHandler<GetCustomerCommand, GetCustomerResponse>
@@ -24,7 +24,7 @@ namespace Pos.Application.Features.Customer.Queries
         }
         public async Task<GetCustomerResponse> Handle(GetCustomerCommand request, CancellationToken cancellationToken)
         {
-            var customer = await _dbContext.Customer.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+            var customer = await _dbContext.Customer.FirstOrDefaultAsync(x => x.Name == request.Name, cancellationToken);
             if (customer == null)
             {
                 return null; 

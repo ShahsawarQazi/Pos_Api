@@ -37,9 +37,9 @@ namespace PosApi.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(GetCustomerResponse), StatusCodes.Status200OK)]
         [Route("Get")]
-        public async Task<IActionResult> GetCustomer(int id)
+        public async Task<IActionResult> GetCustomer(string name)
         {
-            var response = await _mediator.Send(new GetCustomerCommand(id));
+            var response = await _mediator.Send(new GetCustomerCommand(name));
             return Ok(response);
         }
         [HttpPost]
