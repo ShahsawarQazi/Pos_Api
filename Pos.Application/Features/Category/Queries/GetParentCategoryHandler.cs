@@ -2,8 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Pos.Application.Common.Interfaces;
 using Pos.Application.Contracts.Response.Category;
-using Pos.Application.Contracts.Response.Customer;
-using Pos.Application.Features.Customer.Queries;
 
 namespace Pos.Application.Features.Category.Queries
 {

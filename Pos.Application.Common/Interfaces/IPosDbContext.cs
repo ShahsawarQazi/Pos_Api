@@ -10,6 +10,6 @@ namespace Pos.Application.Common.Interfaces
                    OperationType operationType = OperationType.Default, Guid transactionId = default(Guid), bool fullMode = true, bool forMigration = false);
         DbSet<Customer> Customer { get; }
         DbSet<ParentCategory> ParentCategories { get; }
-
+        DbSet<SubCategory> SubCategories { get; }
     }
 }

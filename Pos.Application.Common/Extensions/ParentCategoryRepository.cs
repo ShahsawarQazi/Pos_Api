@@ -1,6 +1,7 @@
 ﻿using Pos.Application.Common.Interfaces;
 using Pos.Domain.Entities.Entities;
 using Microsoft.EntityFrameworkCore;
+using Pos.Application.Common.Models;
 
 namespace Pos.Application.Common.Extensions
 {
@@ -27,5 +28,20 @@ namespace Pos.Application.Common.Extensions
         {
             await _context.SaveChangesAsync();
         }
+
+        public async Task UpdateAsync(UpdateParentCategoryRequest parentCategoryRequest)
+        {
+            var parentCategory = await _context.ParentCategories.FindAsync(parentCategoryRequest.Name);
+
+            if (parentCategory != null)
+            {
+                parentCategory.Name = parentCategoryRequest.Name;
+                parentCategory.Description = parentCategoryRequest.Description;
+
+                _context.ParentCategories.Update(parentCategory);
+                await _context.SaveChangesAsync();
+            }
+        }
+
     }
 }
