@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Pos.Application.Common;
 using Pos.Application.Common.Interfaces;
 using Pos.Application.Contracts.Request.Customer;
+using Pos.Application.Contracts.Request.Menu;
 using Pos.Application.Contracts.Response.Customer;
 using Pos.Application.Features.Customer.Command;
 using Pos.Application.Features.Customer.Queries;
@@ -88,7 +89,40 @@ namespace PosApi.Controllers
             return File(csvBytes, "text/csv", "customers.csv");
         }
 
-       
+
+        [HttpPost]
+        [Route("UploadMenuCsv")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> UploadMenuCsv([FromForm] UploadCsvRequest uploadCsvMenuRequest)
+        {
+            if (uploadCsvMenuRequest.CsvFile.Length == 0)
+            {
+                return BadRequest("No file uploaded.");
+            }
+
+            var command = new UploadCsvCommand(uploadCsvMenuRequest.CsvFile);
+            var result = await _mediator.Send(command);
+
+            if (result)
+            {
+                return Ok("CSV uploaded successfully.");
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while uploading the CSV.");
+            }
+        }
+
+
+        [HttpPost]
+        [ProducesResponseType(typeof(CreateCustomerResponse), StatusCodes.Status200OK)]
+        [Route("CreateMenu")]
+        public async Task<IActionResult> CreateMenu(CreateMenuRequest createMenuRequest)
+        {
+            var response = await _mediator.Send(new CreateMenuCommand(createMenuRequest));
+            return Ok(response);
+        }
+
     }
 }
 

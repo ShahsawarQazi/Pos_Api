@@ -13,27 +13,39 @@ namespace Pos.Application.Common.Extensions
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task AddAsync(Customer customer)
+        public async Task Add(Customer customer)
         {
             await _context.Customer.AddAsync(customer);
         }
 
-        public void Update(Customer customer)
+        public Task Update(Customer customer)
         {
             _context.Customer.Update(customer);
+            return Task.CompletedTask;
         }
 
-        public async Task<Customer> FindByEmailAsync(string email)
+        public Task UpdateMenu(Menu menu)
         {
-            return await _context.Customer.FirstOrDefaultAsync(c => c.Email == email);
+            _context.Menu.Update(menu);
+            return Task.CompletedTask;
         }
 
-        public async Task SaveChangesAsync()
+        public async Task<Customer> FindByEmail(string email)
+        {
+            return (await _context.Customer.FirstOrDefaultAsync(c => c.Email == email))!;
+        }
+
+        public async Task<Menu> FindByMenu(string name)
+        {
+            return (await _context.Menu.FirstOrDefaultAsync(c => c.Name == name))!;
+        }
+
+        public async Task SaveChanges()
         {
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Customer>> GetAllAsync()
+        public async Task<IEnumerable<Customer>> GetAll()
         {
             return await _context.Customer.ToListAsync();
         }

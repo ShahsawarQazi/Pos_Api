@@ -41,7 +41,7 @@ public class UploadCsvCommandHandler : IRequestHandler<UploadCsvCommand, bool>
 
             foreach (var record in records)
             {
-                var existingCustomer = await _customerRepository.FindByEmailAsync(record.Email);
+                var existingCustomer = await _customerRepository.FindByEmail(record.Email);
                 if (existingCustomer != null)
                 {
                     if (HasDifferences(existingCustomer, record))
@@ -67,11 +67,11 @@ public class UploadCsvCommandHandler : IRequestHandler<UploadCsvCommand, bool>
                         Address = record.Address
                     };
 
-                    await _customerRepository.AddAsync(newCustomer);
+                    await _customerRepository.Add(newCustomer);
                 }
             }
 
-            await _customerRepository.SaveChangesAsync();
+            await _customerRepository.SaveChanges();
             return true;
         }
         catch (Exception ex)

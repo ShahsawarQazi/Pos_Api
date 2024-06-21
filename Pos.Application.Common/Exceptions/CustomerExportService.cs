@@ -18,7 +18,7 @@ namespace Pos.Application.Common.Exceptions
 
         public async Task<IEnumerable<CustomerExportDto>> GetCustomersForExportAsync()
         {
-            var customers = await _customerRepository.GetAllAsync();
+            var customers = await _customerRepository.GetAll();
             return customers.Select(c => new CustomerExportDto
             {
                 Name = c.Name,
