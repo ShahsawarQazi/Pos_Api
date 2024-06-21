@@ -24,20 +24,9 @@ namespace Pos.Application.Common.Extensions
             return Task.CompletedTask;
         }
 
-        public Task UpdateMenu(Menu menu)
-        {
-            _context.Menu.Update(menu);
-            return Task.CompletedTask;
-        }
-
         public async Task<Customer> FindByEmail(string email)
         {
             return (await _context.Customer.FirstOrDefaultAsync(c => c.Email == email))!;
-        }
-
-        public async Task<Menu> FindByMenu(string name)
-        {
-            return (await _context.Menu.FirstOrDefaultAsync(c => c.Name == name))!;
         }
 
         public async Task SaveChanges()

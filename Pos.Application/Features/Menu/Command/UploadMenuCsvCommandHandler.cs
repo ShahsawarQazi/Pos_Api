@@ -18,11 +18,11 @@ public class UploadMenuCsvCommand : IRequest<bool>
 }
 public class UploadMenuCsvCommandHandler : IRequestHandler<UploadMenuCsvCommand, bool>
 {
-    private readonly ICustomerRepository _customerRepository;
+    private readonly IMenuRepository _menuRepository;
 
-    public UploadMenuCsvCommandHandler(ICustomerRepository customerRepository)
+    public UploadMenuCsvCommandHandler(IMenuRepository menuRepository)
     {
-        _customerRepository = customerRepository;
+        _menuRepository = menuRepository;
     }
 
     public async Task<bool> Handle(UploadMenuCsvCommand request, CancellationToken cancellationToken)
@@ -41,20 +41,34 @@ public class UploadMenuCsvCommandHandler : IRequestHandler<UploadMenuCsvCommand,
 
             foreach (var record in records)
             {
-                var existingMenu = await _customerRepository.FindByMenu(record.Name);
-                if (HasDifferences(existingMenu, record))
+                var existingMenu = await _menuRepository.FindByMenu(record.Name);
+                if (existingMenu == null)
                 {
+                    // Add new record if not found
+                    var newMenu = new Domain.Entities.Entities.Menu
+                    {
+                        Name = record.Name,
+                        Item = record.Item,
+                        Variant = record.Variant,
+                        Size = record.Size,
+                        price = record.price
+                    };
+                    await _menuRepository.AddMenu(newMenu);
+                }
+                else if (HasDifferences(existingMenu, record))
+                {
+                    // Update existing record if differences found
                     existingMenu.Name = record.Name;
                     existingMenu.Item = record.Item;
                     existingMenu.Variant = record.Variant;
                     existingMenu.Size = record.Size;
                     existingMenu.price = record.price;
 
-                    await _customerRepository.UpdateMenu(existingMenu);
+                    await _menuRepository.UpdateMenu(existingMenu);
                 }
             }
 
-            await _customerRepository.SaveChanges();
+            await _menuRepository.SaveChanges();
             return true;
         }
         catch (Exception ex)

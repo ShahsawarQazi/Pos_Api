@@ -4,6 +4,7 @@ using Pos.Application.Contracts.Request.Customer;
 using Pos.Application.Contracts.Request.Menu;
 using Pos.Application.Contracts.Response.Menu;
 using Pos.Application.Features.Customer.Command;
+using Pos.Application.Features.Menu.Command;
 using PosApi.Extensions.Swagger;
 
 namespace PosApi.Controllers
@@ -48,7 +49,7 @@ namespace PosApi.Controllers
                 return BadRequest("No file uploaded.");
             }
 
-            var command = new UploadCsvCommand(uploadCsvMenuRequest.CsvFile);
+            var command = new UploadMenuCsvCommand(uploadCsvMenuRequest.CsvFile);
             var result = await _mediator.Send(command);
 
             if (result)
